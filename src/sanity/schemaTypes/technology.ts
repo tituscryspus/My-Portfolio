@@ -4,7 +4,8 @@ export const technology = defineType({
   name: "technology",
   title: "Technology",
   type: "document",
-  description: "A skill or tool shown as a tag on portfolio projects.",
+  description:
+    "Add and manage technology names here (Next.js, Figma, etc.). Projects only select from this list — they cannot create technologies.",
   fields: [
     defineField({
       name: "name",
@@ -18,7 +19,7 @@ export const technology = defineType({
       title: "Sort Order",
       type: "number",
       initialValue: 0,
-      description: "Optional — used when browsing the Technologies list in the studio.",
+      description: "Optional — controls order in the Technologies list.",
     }),
   ],
   orderings: [

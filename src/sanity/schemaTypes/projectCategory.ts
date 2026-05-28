@@ -5,7 +5,7 @@ export const projectCategory = defineType({
   title: "Project Category",
   type: "document",
   description:
-    "Filter tabs on the portfolio section. Create categories here, then assign them to projects.",
+    "Add and manage portfolio filter tabs here (Web Apps, Mobile, etc.). Projects only select from this list — they cannot create categories.",
   fields: [
     defineField({
       name: "title",

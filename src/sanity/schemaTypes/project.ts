@@ -1,11 +1,11 @@
-import { defineField, defineType } from "sanity";
+import { defineArrayMember, defineField, defineType } from "sanity";
 
 export const project = defineType({
   name: "project",
   title: "Project",
   type: "document",
   description:
-    "Portfolio projects. To delete one: open it, click ⋮ (top right), then Delete.",
+    "Assign an existing category and technologies only. Add new categories under Project Categories and new technologies under Technologies.",
   fields: [
     defineField({
       name: "title",
@@ -27,26 +27,32 @@ export const project = defineType({
       options: { hotspot: true },
     }),
     defineField({
-      name: "tags",
-      title: "Technologies / Tags",
-      type: "array",
-      of: [
-        {
-          type: "reference",
-          to: [{ type: "technology" }],
-        },
-      ],
-      description:
-        "Click Add item, pick a technology, or press + Create new to add one (e.g. Next.js). Manage all technologies under Technologies in the sidebar.",
-    }),
-    defineField({
       name: "category",
       title: "Category",
       type: "reference",
       to: [{ type: "projectCategory" }],
       description:
-        "Choose an existing category or click + Create to add a new one (manage all categories under Project Categories in the sidebar).",
+        "Select one category from the list. To add a new category, go to Project Categories in the sidebar first.",
+      options: {
+        disableNew: true,
+      },
       validation: (rule) => rule.required(),
+    }),
+    defineField({
+      name: "tags",
+      title: "Technologies",
+      type: "array",
+      of: [
+        defineArrayMember({
+          type: "reference",
+          to: [{ type: "technology" }],
+          options: {
+            disableNew: true,
+          },
+        }),
+      ],
+      description:
+        "Select technologies that apply to this project. Click Add item, then search and pick from the list. To add a new technology, go to Technologies in the sidebar first.",
     }),
     defineField({
       name: "liveUrl",
