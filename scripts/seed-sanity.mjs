@@ -151,6 +151,48 @@ const categoryRef = (id) => ({
   _ref: id,
 });
 
+const technologyNames = [
+  "Next.js",
+  "Stripe",
+  "PostgreSQL",
+  "Tailwind",
+  "React",
+  "Node.js",
+  "MongoDB",
+  "Chart.js",
+  "React Native",
+  "Firebase",
+  "Plaid API",
+  "Vue.js",
+  "Express",
+  "Mapbox",
+  "Python",
+  "Redis",
+  "D3.js",
+  "Socket.io",
+  "MySQL",
+];
+
+const techId = (name) =>
+  `tech-${name
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-|-$/g, "")}`;
+
+const technologies = technologyNames.map((name, order) => ({
+  _id: techId(name),
+  _type: "technology",
+  name,
+  order,
+}));
+
+const techRef = (name) => ({
+  _type: "reference",
+  _ref: techId(name),
+});
+
+const tagRefs = (names) => names.map((name) => techRef(name));
+
 const services = [
   {
     _id: "service-web-development",
@@ -209,7 +251,7 @@ const projects = [
     order: 0,
     category: categoryRef("category-fullstack"),
     featured: true,
-    tags: ["Next.js", "Stripe", "PostgreSQL", "Tailwind"],
+    tags: tagRefs(["Next.js", "Stripe", "PostgreSQL", "Tailwind"]),
     description:
       "A full-featured online store with real-time inventory, secure payments via Stripe, and an admin dashboard for order management.",
     liveUrl: "#",
@@ -221,7 +263,7 @@ const projects = [
     order: 1,
     category: categoryRef("category-web"),
     featured: true,
-    tags: ["React", "Node.js", "MongoDB", "Chart.js"],
+    tags: tagRefs(["React", "Node.js", "MongoDB", "Chart.js"]),
     description:
       "Patient management system with appointment scheduling, medical records, and analytics for healthcare providers.",
     liveUrl: "#",
@@ -232,7 +274,7 @@ const projects = [
     order: 2,
     category: categoryRef("category-mobile"),
     featured: true,
-    tags: ["React Native", "Firebase", "Plaid API"],
+    tags: tagRefs(["React Native", "Firebase", "Plaid API"]),
     description:
       "Personal finance tracker with budget planning, expense categorization, and investment portfolio monitoring.",
     liveUrl: "#",
@@ -243,7 +285,7 @@ const projects = [
     order: 3,
     category: categoryRef("category-web"),
     featured: false,
-    tags: ["Vue.js", "Express", "PostgreSQL", "Mapbox"],
+    tags: tagRefs(["Vue.js", "Express", "PostgreSQL", "Mapbox"]),
     description:
       "Property listing platform with advanced search filters, virtual tours, and agent management tools.",
     liveUrl: "#",
@@ -255,7 +297,7 @@ const projects = [
     order: 4,
     category: categoryRef("category-fullstack"),
     featured: false,
-    tags: ["Next.js", "Python", "Redis", "D3.js"],
+    tags: tagRefs(["Next.js", "Python", "Redis", "D3.js"]),
     description:
       "Business intelligence dashboard with custom reports, data visualization, and team collaboration features.",
     liveUrl: "#",
@@ -266,7 +308,7 @@ const projects = [
     order: 5,
     category: categoryRef("category-fullstack"),
     featured: false,
-    tags: ["React", "Socket.io", "Node.js", "MySQL"],
+    tags: tagRefs(["React", "Socket.io", "Node.js", "MySQL"]),
     description:
       "QR-code based ordering system with kitchen display, table management, and real-time order tracking.",
     liveUrl: "#",
@@ -297,6 +339,11 @@ async function seed() {
   }
   console.log(`✓ ${projectCategories.length} project categories`);
 
+  for (const item of technologies) {
+    await client.createOrReplace(item);
+  }
+  console.log(`✓ ${technologies.length} technologies`);
+
   for (const item of projects) {
     await client.createOrReplace({ _type: "project", ...item });
   }
@@ -308,8 +355,9 @@ async function seed() {
   console.log(`✓ ${stats.length} statistics`);
 
   console.log("\nDone! In /studio you can:");
+  console.log("  • Technologies — add tools/skills (Next.js, Figma, etc.)");
   console.log("  • Project Categories — add/rename/delete filter tabs");
-  console.log("  • Projects — type custom tags; pick or create categories");
+  console.log("  • Projects — link technologies; pick or create categories");
   console.log("  • Site Settings → Page Sections — edit section headings");
 }
 

@@ -70,14 +70,19 @@ function ProjectCard({ project }: { project: Project }) {
           {project.description}
         </p>
         <div className="mt-4 flex flex-wrap gap-2">
-          {project.tags.map((tag) => (
-            <span
-              key={tag}
-              className="rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-muted"
-            >
-              {tag}
-            </span>
-          ))}
+          {project.tags.map((tag, tagIndex) => {
+            const label = typeof tag === "string" ? tag.trim() : "";
+            if (!label) return null;
+
+            return (
+              <span
+                key={`${project.id}-${label}-${tagIndex}`}
+                className="rounded-full bg-white/5 px-3 py-1 text-xs font-medium text-muted"
+              >
+                {label}
+              </span>
+            );
+          })}
         </div>
       </div>
     </motion.article>

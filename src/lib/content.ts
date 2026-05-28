@@ -33,6 +33,63 @@ const staticContent: SiteContent = {
 
 type SanityImage = { asset?: { _ref?: string } } | null | undefined;
 
+type SanityTagValue =
+  | string
+  | null
+  | undefined
+  | { _ref?: string; _type?: string; name?: string | null };
+
+/** Converts Sanity tag strings/references into plain text safe for React. */
+function normalizeProjectTags(
+  tags: SanityTagValue[] | null | undefined,
+  fallback: string[]
+): string[] {
+  if (!Array.isArray(tags)) {
+    return fallback;
+  }
+
+  const normalized = tags
+    .map((tag) => {
+      if (typeof tag === "string") {
+        const value = tag.trim();
+        return value || null;
+      }
+      if (tag && typeof tag === "object") {
+        if (typeof tag.name === "string") {
+          const value = tag.name.trim();
+          return value || null;
+        }
+        // Unresolved reference from Sanity — do not pass to React as a child.
+        return null;
+      }
+      return null;
+    })
+    .filter((tag): tag is string => Boolean(tag));
+
+  return normalized.length > 0 ? normalized : fallback;
+}
+
+function normalizeCategorySlug(category: unknown, fallback: string): string {
+  if (typeof category === "string") {
+    const value = category.trim();
+    return value || fallback;
+  }
+  if (category && typeof category === "object") {
+    const record = category as Record<string, unknown>;
+    if (typeof record.current === "string" && record.current.trim()) {
+      return record.current.trim();
+    }
+    const slug = record.slug;
+    if (slug && typeof slug === "object" && "current" in slug) {
+      const current = (slug as { current?: string }).current;
+      if (typeof current === "string" && current.trim()) {
+        return current.trim();
+      }
+    }
+  }
+  return fallback;
+}
+
 function imageUrl(image: SanityImage, fallback: string): string {
   if (!image) return fallback;
   const url = urlForImage(image);
@@ -169,9 +226,10 @@ function isUsableService(
 }
 
 function isUsableProject(
-  item: { title?: string; description?: string; category?: string | null } | null | undefined
+  item: { title?: string; description?: string; category?: unknown } | null | undefined
 ): boolean {
-  return Boolean(item?.title?.trim() && item?.description?.trim() && item?.category?.trim());
+  const category = normalizeCategorySlug(item?.category, "");
+  return Boolean(item?.title?.trim() && item?.description?.trim() && category);
 }
 
 function isUsableStat(item: { value?: string; label?: string } | null | undefined): boolean {
@@ -199,8 +257,8 @@ function mapProjectsFromSanity(
     title?: string;
     description?: string;
     image?: SanityImage;
-    tags?: string[];
-    category?: string | null;
+    tags?: SanityTagValue[];
+    category?: unknown;
     categoryLabel?: string | null;
     liveUrl?: string;
     githubUrl?: string;
@@ -214,7 +272,7 @@ function mapProjectsFromSanity(
   }
   return usable.map((item, index) => {
     const fallback = staticProjects[index];
-    const category = item.category?.trim() || fallback?.category || "web";
+    const category = normalizeCategorySlug(item.category, fallback?.category || "web");
     const categoryLabel =
       item.categoryLabel?.trim() ||
       fallback?.categoryLabel ||
@@ -228,7 +286,7 @@ function mapProjectsFromSanity(
       image:
         imageUrl(item.image, fallback?.image || "/projects/ecommerce.svg") ||
         "/projects/ecommerce.svg",
-      tags: item.tags?.length ? item.tags : fallback?.tags || [],
+      tags: normalizeProjectTags(item.tags, fallback?.tags || []),
       category,
       categoryLabel,
       liveUrl: item.liveUrl || fallback?.liveUrl || undefined,
@@ -292,8 +350,8 @@ export const getContent = cache(async (): Promise<SiteContent> => {
           title?: string;
           description?: string;
           image?: SanityImage;
-          tags?: string[];
-          category?: string | null;
+          tags?: SanityTagValue[];
+          category?: unknown;
           categoryLabel?: string | null;
           liveUrl?: string;
           githubUrl?: string;

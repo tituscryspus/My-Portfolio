@@ -34,7 +34,7 @@ export const projectsQuery = `*[_type == "project"] | order(order asc){
   title,
   description,
   image,
-  tags,
+  "tags": array::compact(tags[]->name),
   "category": category->slug.current,
   "categoryLabel": category->title,
   liveUrl,

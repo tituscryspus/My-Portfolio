@@ -30,10 +30,14 @@ export const project = defineType({
       name: "tags",
       title: "Technologies / Tags",
       type: "array",
-      of: [{ type: "string" }],
-      options: { layout: "tags" },
+      of: [
+        {
+          type: "reference",
+          to: [{ type: "technology" }],
+        },
+      ],
       description:
-        "Type any technology name and press Enter to add it. Remove a tag with the × on each pill.",
+        "Click Add item, pick a technology, or press + Create new to add one (e.g. Next.js). Manage all technologies under Technologies in the sidebar.",
     }),
     defineField({
       name: "category",
