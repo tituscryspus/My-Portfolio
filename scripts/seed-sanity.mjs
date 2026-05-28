@@ -1,7 +1,7 @@
 /**
  * Seeds your Sanity project with current site content.
  *
- * 1. Copy .env.example to .env.local and fill in your Sanity project ID + token
+ * 1. Set NEXT_PUBLIC_SANITY_PROJECT_ID and SANITY_API_TOKEN in .env.local
  * 2. Run: npm run sanity:seed
  */
 import { createClient } from "@sanity/client";
@@ -25,7 +25,7 @@ function loadEnv() {
       }
     }
   } catch {
-    console.error("Could not read .env.local — copy .env.example to .env.local first.");
+    console.error("Could not read .env.local — add your Sanity project ID and API token first.");
     process.exit(1);
   }
 }
@@ -57,6 +57,44 @@ const siteSettings = {
   description:
     "Tkryce Tech Solutions delivers cutting-edge software development, web applications, and digital transformation services. Founded by Computer Scientist Lukaye Titus Cryspus.",
   descriptionCta: "Partner with us to build the future.",
+  sections: {
+    about: {
+      eyebrow: "About Us",
+      heading: "Technology Partners You Can",
+      headingHighlight: "Trust",
+      description:
+        "Tkryce Tech Solutions is a forward-thinking technology company founded by Lukaye Titus Cryspus, a Computer Scientist specializing in custom software development, digital products, and IT consulting. We combine technical excellence with business insight to deliver solutions that make a real impact.",
+      paragraph2:
+        "From startups to enterprises, we help organizations navigate their digital transformation journeys with confidence — backed by computer science expertise and real-world engineering experience.",
+      highlights: [
+        "End-to-end project delivery from concept to launch",
+        "Agile methodology with transparent communication",
+        "Scalable solutions built for long-term growth",
+        "Dedicated support and maintenance packages",
+      ],
+    },
+    services: {
+      eyebrow: "Our Services",
+      heading: "Solutions Tailored to",
+      headingHighlight: "Your Needs",
+      description:
+        "From concept to deployment, we offer comprehensive technology services to help your business thrive in the digital age.",
+    },
+    projects: {
+      eyebrow: "Portfolio",
+      heading: "Projects We've",
+      headingHighlight: "Built",
+      description:
+        "Explore our latest work — from startups to enterprise solutions, each project crafted with precision and passion.",
+    },
+    contact: {
+      eyebrow: "Contact",
+      heading: "Let's Build Something",
+      headingHighlight: "Great",
+      description:
+        "Whether you need a business partner or want to connect personally, we'd love to hear from you.",
+    },
+  },
   email: {
     business: "hello@tkrycetechnsolutions.com",
     personal: "lukaye.cryspus@tkrycetechnsolutions.com",
@@ -75,110 +113,161 @@ const siteSettings = {
     title: "Computer Scientist",
     bio: "I am a Computer Scientist and the founder of Tkryce Tech Solutions. With a deep passion for technology and problem-solving, I specialize in building scalable web applications, mobile solutions, and enterprise software that help businesses grow and innovate in the digital age.",
   },
-  aboutSection: {
-    eyebrow: "About Us",
-    title: "Technology Partners You Can",
-    titleHighlight: "Trust",
-    description:
-      "Tkryce Tech Solutions is a forward-thinking technology company founded by Lukaye Titus Cryspus, a Computer Scientist specializing in custom software development, digital products, and IT consulting. We combine technical excellence with business insight to deliver solutions that make a real impact.",
-    description2:
-      "From startups to enterprises, we help organizations navigate their digital transformation journeys with confidence — backed by computer science expertise and real-world engineering experience.",
-    highlights: [
-      "End-to-end project delivery from concept to launch",
-      "Agile methodology with transparent communication",
-      "Scalable solutions built for long-term growth",
-      "Dedicated support and maintenance packages",
-    ],
-    pageTitle: "About Us",
-    pageDescription:
-      "Meet Lukaye Titus Cryspus and learn about Tkryce Tech Solutions.",
-  },
-  servicesSection: {
-    eyebrow: "Our Services",
-    title: "Solutions Tailored to",
-    titleHighlight: "Your Needs",
-    description:
-      "From concept to deployment, we offer comprehensive technology services to help your business thrive in the digital age.",
-    pageTitle: "Our Services",
-    pageDescription:
-      "Comprehensive technology solutions tailored to your business needs.",
-  },
-  projectsSection: {
-    eyebrow: "Portfolio",
-    title: "Projects We've",
-    titleHighlight: "Built",
-    description:
-      "Explore our latest work — from startups to enterprise solutions, each project crafted with precision and passion.",
-    pageTitle: "Our Projects",
-    pageDescription:
-      "Explore the digital products and solutions we've built for clients.",
-    projectFilters: [
-      { id: "all", label: "All Projects" },
-      { id: "web", label: "Web Apps" },
-      { id: "mobile", label: "Mobile" },
-      { id: "fullstack", label: "Full Stack" },
-      { id: "design", label: "Design" },
-    ],
-  },
-  contactSection: {
-    eyebrow: "Contact",
-    title: "Let's Build Something",
-    titleHighlight: "Great",
-    description:
-      "Whether you need a business partner or want to connect personally, we'd love to hear from you.",
-    pageTitle: "Contact Us",
-    pageDescription:
-      "Reach out for business inquiries or connect with Lukaye personally.",
-  },
 };
 
 const services = [
-  { icon: "Code2", title: "Web Development", order: 0, description: "Custom websites and web applications built with modern frameworks like React, Next.js, and Node.js for blazing-fast performance." },
-  { icon: "Smartphone", title: "Mobile Solutions", order: 1, description: "Cross-platform mobile apps that deliver seamless experiences on iOS and Android using React Native and Flutter." },
-  { icon: "Cloud", title: "Cloud & DevOps", order: 2, description: "Scalable cloud infrastructure, CI/CD pipelines, and deployment strategies on AWS, Azure, and Google Cloud." },
-  { icon: "Palette", title: "UI/UX Design", order: 3, description: "User-centered design that combines aesthetics with functionality to create intuitive digital experiences." },
-  { icon: "Database", title: "Backend Systems", order: 4, description: "Robust APIs, database architecture, and microservices that power your applications reliably at scale." },
-  { icon: "Shield", title: "Consulting", order: 5, description: "Technology strategy, code audits, and digital transformation guidance to align tech with business goals." },
+  {
+    _id: "service-web-development",
+    icon: "Code2",
+    title: "Web Development",
+    order: 0,
+    description:
+      "Custom websites and web applications built with modern frameworks like React, Next.js, and Node.js for blazing-fast performance.",
+  },
+  {
+    _id: "service-mobile-solutions",
+    icon: "Smartphone",
+    title: "Mobile Solutions",
+    order: 1,
+    description:
+      "Cross-platform mobile apps that deliver seamless experiences on iOS and Android using React Native and Flutter.",
+  },
+  {
+    _id: "service-cloud-devops",
+    icon: "Cloud",
+    title: "Cloud & DevOps",
+    order: 2,
+    description:
+      "Scalable cloud infrastructure, CI/CD pipelines, and deployment strategies on AWS, Azure, and Google Cloud.",
+  },
+  {
+    _id: "service-ui-ux-design",
+    icon: "Palette",
+    title: "UI/UX Design",
+    order: 3,
+    description:
+      "User-centered design that combines aesthetics with functionality to create intuitive digital experiences.",
+  },
+  {
+    _id: "service-backend-systems",
+    icon: "Database",
+    title: "Backend Systems",
+    order: 4,
+    description:
+      "Robust APIs, database architecture, and microservices that power your applications reliably at scale.",
+  },
+  {
+    _id: "service-consulting",
+    icon: "Shield",
+    title: "Consulting",
+    order: 5,
+    description:
+      "Technology strategy, code audits, and digital transformation guidance to align tech with business goals.",
+  },
 ];
 
 const projects = [
-  { title: "E-Commerce Platform", order: 0, category: "fullstack", featured: true, tags: ["Next.js", "Stripe", "PostgreSQL", "Tailwind"], description: "A full-featured online store with real-time inventory, secure payments via Stripe, and an admin dashboard for order management.", liveUrl: "#", githubUrl: "#" },
-  { title: "Healthcare Dashboard", order: 1, category: "web", featured: true, tags: ["React", "Node.js", "MongoDB", "Chart.js"], description: "Patient management system with appointment scheduling, medical records, and analytics for healthcare providers.", liveUrl: "#" },
-  { title: "FinTech Mobile App", order: 2, category: "mobile", featured: true, tags: ["React Native", "Firebase", "Plaid API"], description: "Personal finance tracker with budget planning, expense categorization, and investment portfolio monitoring.", liveUrl: "#" },
-  { title: "Real Estate Portal", order: 3, category: "web", featured: false, tags: ["Vue.js", "Express", "PostgreSQL", "Mapbox"], description: "Property listing platform with advanced search filters, virtual tours, and agent management tools.", liveUrl: "#", githubUrl: "#" },
-  { title: "SaaS Analytics Tool", order: 4, category: "fullstack", featured: false, tags: ["Next.js", "Python", "Redis", "D3.js"], description: "Business intelligence dashboard with custom reports, data visualization, and team collaboration features.", liveUrl: "#" },
-  { title: "Restaurant Ordering System", order: 5, category: "fullstack", featured: false, tags: ["React", "Socket.io", "Node.js", "MySQL"], description: "QR-code based ordering system with kitchen display, table management, and real-time order tracking.", liveUrl: "#", githubUrl: "#" },
+  {
+    _id: "project-ecommerce-platform",
+    title: "E-Commerce Platform",
+    order: 0,
+    category: "fullstack",
+    featured: true,
+    tags: ["Next.js", "Stripe", "PostgreSQL", "Tailwind"],
+    description:
+      "A full-featured online store with real-time inventory, secure payments via Stripe, and an admin dashboard for order management.",
+    liveUrl: "#",
+    githubUrl: "#",
+  },
+  {
+    _id: "project-healthcare-dashboard",
+    title: "Healthcare Dashboard",
+    order: 1,
+    category: "web",
+    featured: true,
+    tags: ["React", "Node.js", "MongoDB", "Chart.js"],
+    description:
+      "Patient management system with appointment scheduling, medical records, and analytics for healthcare providers.",
+    liveUrl: "#",
+  },
+  {
+    _id: "project-fintech-mobile-app",
+    title: "FinTech Mobile App",
+    order: 2,
+    category: "mobile",
+    featured: true,
+    tags: ["React Native", "Firebase", "Plaid API"],
+    description:
+      "Personal finance tracker with budget planning, expense categorization, and investment portfolio monitoring.",
+    liveUrl: "#",
+  },
+  {
+    _id: "project-real-estate-portal",
+    title: "Real Estate Portal",
+    order: 3,
+    category: "web",
+    featured: false,
+    tags: ["Vue.js", "Express", "PostgreSQL", "Mapbox"],
+    description:
+      "Property listing platform with advanced search filters, virtual tours, and agent management tools.",
+    liveUrl: "#",
+    githubUrl: "#",
+  },
+  {
+    _id: "project-saas-analytics-tool",
+    title: "SaaS Analytics Tool",
+    order: 4,
+    category: "fullstack",
+    featured: false,
+    tags: ["Next.js", "Python", "Redis", "D3.js"],
+    description:
+      "Business intelligence dashboard with custom reports, data visualization, and team collaboration features.",
+    liveUrl: "#",
+  },
+  {
+    _id: "project-restaurant-ordering-system",
+    title: "Restaurant Ordering System",
+    order: 5,
+    category: "fullstack",
+    featured: false,
+    tags: ["React", "Socket.io", "Node.js", "MySQL"],
+    description:
+      "QR-code based ordering system with kitchen display, table management, and real-time order tracking.",
+    liveUrl: "#",
+    githubUrl: "#",
+  },
 ];
 
 const stats = [
-  { value: "50+", label: "Projects Delivered", order: 0 },
-  { value: "30+", label: "Happy Clients", order: 1 },
-  { value: "5+", label: "Years Experience", order: 2 },
-  { value: "99%", label: "Client Satisfaction", order: 3 },
+  { _id: "stat-projects-delivered", value: "50+", label: "Projects Delivered", order: 0 },
+  { _id: "stat-happy-clients", value: "30+", label: "Happy Clients", order: 1 },
+  { _id: "stat-years-experience", value: "5+", label: "Years Experience", order: 2 },
+  { _id: "stat-client-satisfaction", value: "99%", label: "Client Satisfaction", order: 3 },
 ];
 
 async function seed() {
   console.log("Seeding Sanity dataset:", dataset);
 
   await client.createOrReplace(siteSettings);
-  console.log("✓ Site settings");
+  console.log("✓ Site settings (including page section copy)");
 
   for (const item of services) {
-    await client.create({ _type: "service", ...item });
+    await client.createOrReplace({ _type: "service", ...item });
   }
   console.log(`✓ ${services.length} services`);
 
   for (const item of projects) {
-    await client.create({ _type: "project", ...item });
+    await client.createOrReplace({ _type: "project", ...item });
   }
   console.log(`✓ ${projects.length} projects`);
 
   for (const item of stats) {
-    await client.create({ _type: "stat", ...item });
+    await client.createOrReplace({ _type: "stat", ...item });
   }
   console.log(`✓ ${stats.length} statistics`);
 
-  console.log("\nDone! Open http://localhost:3000/studio to edit your content.");
+  console.log("\nDone! Open /studio → Site Settings → Page Sections to edit section text.");
+  console.log("Edit Services, Projects, and Statistics from the studio sidebar.");
 }
 
 seed().catch((err) => {

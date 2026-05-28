@@ -17,21 +17,21 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react";
-import SectionIntro from "@/components/SectionIntro";
+import { pageSections as defaultSections } from "@/data/sections";
 import { siteConfig as defaultSiteConfig } from "@/data/site";
-import { defaultPageSections } from "@/data/sections";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
-import type { SectionIntro as SectionIntroContent, SiteConfig } from "@/types/content";
+import type { SectionIntro, SiteConfig } from "@/types/content";
+import SectionHeading from "./SectionHeading";
 
 type ContactType = "business" | "personal";
 
 export default function Contact({
   siteConfig = defaultSiteConfig,
-  section = defaultPageSections.contact,
+  section = defaultSections.contact,
   standalone = false,
 }: {
   siteConfig?: SiteConfig;
-  section?: SectionIntroContent;
+  section?: SectionIntro;
   standalone?: boolean;
 }) {
   const [contactType, setContactType] = useState<ContactType>("business");
@@ -140,7 +140,7 @@ export default function Contact({
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-        {!standalone && <SectionIntro section={section} />}
+        {!standalone && <SectionHeading section={section} />}
 
         <div className={`flex justify-center gap-4 ${standalone ? "" : "mt-12"}`}>
           <button

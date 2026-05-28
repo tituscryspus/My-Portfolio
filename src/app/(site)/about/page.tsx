@@ -6,21 +6,15 @@ import { getContent } from "@/lib/content";
 export const revalidate = 60;
 
 export default async function AboutPage() {
-  const { siteConfig, stats, pageSections } = await getContent();
-  const { about } = pageSections;
+  const { siteConfig, stats, sections } = await getContent();
 
   return (
     <PageShell>
       <PageHeader
-        title={about.pageTitle}
-        description={about.pageDescription}
+        title="About Us"
+        description={`Meet ${siteConfig.founder.name} and learn about ${siteConfig.businessName}.`}
       />
-      <About
-        siteConfig={siteConfig}
-        stats={stats}
-        section={about}
-        standalone
-      />
+      <About siteConfig={siteConfig} stats={stats} section={sections.about} standalone />
     </PageShell>
   );
 }

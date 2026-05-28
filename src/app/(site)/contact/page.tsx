@@ -6,16 +6,15 @@ import { getContent } from "@/lib/content";
 export const revalidate = 60;
 
 export default async function ContactPage() {
-  const { siteConfig, pageSections } = await getContent();
-  const { contact } = pageSections;
+  const { siteConfig, sections } = await getContent();
 
   return (
     <PageShell>
       <PageHeader
-        title={contact.pageTitle}
-        description={contact.pageDescription}
+        title="Contact Us"
+        description="Reach out for business inquiries or connect with Lukaye personally."
       />
-      <Contact siteConfig={siteConfig} standalone />
+      <Contact siteConfig={siteConfig} section={sections.contact} standalone />
     </PageShell>
   );
 }

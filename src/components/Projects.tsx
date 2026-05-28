@@ -4,10 +4,10 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, Github, ArrowUpRight } from "lucide-react";
-import SectionIntro from "@/components/SectionIntro";
-import { projects as defaultProjects } from "@/data/projects";
-import { defaultPageSections } from "@/data/sections";
-import type { Project, ProjectCategory, ProjectsSection } from "@/types/content";
+import { pageSections as defaultSections } from "@/data/sections";
+import { projects as defaultProjects, categories, type Project } from "@/data/projects";
+import type { SectionIntro } from "@/types/content";
+import SectionHeading from "./SectionHeading";
 
 function ProjectCard({ project }: { project: Project }) {
   const isExternal = project.image.startsWith("http");
@@ -85,14 +85,13 @@ function ProjectCard({ project }: { project: Project }) {
 
 export default function Projects({
   projects = defaultProjects,
-  section = defaultPageSections.projects,
+  section = defaultSections.projects,
   standalone = false,
 }: {
   projects?: Project[];
-  section?: ProjectsSection;
+  section?: SectionIntro;
   standalone?: boolean;
 }) {
-  const categories: ProjectCategory[] = section.projectFilters;
   const [activeCategory, setActiveCategory] = useState("all");
 
   const filtered =
@@ -107,7 +106,7 @@ export default function Projects({
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-        {!standalone && <SectionIntro section={section} />}
+        {!standalone && <SectionHeading section={section} />}
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}

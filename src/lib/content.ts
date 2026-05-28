@@ -1,7 +1,7 @@
 import { cache } from "react";
 import { siteConfig as staticSiteConfig, services as staticServices, stats as staticStats } from "@/data/site";
+import { pageSections as staticSections, type AboutSection, type PageSections, type SectionIntro } from "@/data/sections";
 import { projects as staticProjects } from "@/data/projects";
-import { defaultPageSections } from "@/data/sections";
 import { sanityClient } from "@/sanity/lib/client";
 import { urlForImage } from "@/sanity/lib/image";
 import {
@@ -12,12 +12,7 @@ import {
 } from "@/sanity/lib/queries";
 import { isSanityConfigured } from "@/sanity/env";
 import type {
-  AboutSection,
-  PageSections,
   Project,
-  ProjectCategory,
-  ProjectsSection,
-  SectionIntro,
   Service,
   ServiceIcon,
   SiteConfig,
@@ -27,7 +22,7 @@ import type {
 
 const staticContent: SiteContent = {
   siteConfig: staticSiteConfig,
-  pageSections: defaultPageSections,
+  sections: staticSections,
   services: staticServices as Service[],
   projects: staticProjects,
   stats: staticStats,
@@ -41,29 +36,60 @@ function imageUrl(image: SanityImage, fallback: string): string {
   return url || fallback;
 }
 
-type SanitySectionIntro = {
-  eyebrow?: string;
-  title?: string;
-  titleHighlight?: string;
-  description?: string;
-  pageTitle?: string;
-  pageDescription?: string;
-};
+function mergeSectionIntro(
+  data: Partial<SectionIntro> | null | undefined,
+  fallback: SectionIntro
+): SectionIntro {
+  return {
+    eyebrow: data?.eyebrow?.trim() || fallback.eyebrow,
+    heading: data?.heading?.trim() || fallback.heading,
+    headingHighlight: data?.headingHighlight?.trim() || fallback.headingHighlight,
+    description: data?.description?.trim() || fallback.description,
+  };
+}
+
+function mergeAboutSection(
+  data: Partial<AboutSection> | null | undefined,
+  fallback: AboutSection
+): AboutSection {
+  const intro = mergeSectionIntro(data, fallback);
+  const highlights =
+    data?.highlights?.map((item) => item?.trim()).filter((item): item is string => Boolean(item)) ??
+    [];
+  return {
+    ...intro,
+    paragraph2: data?.paragraph2?.trim() || fallback.paragraph2,
+    highlights: highlights.length > 0 ? highlights : fallback.highlights,
+  };
+}
+
+function mergePageSections(
+  data: {
+    about?: Partial<AboutSection> | null;
+    services?: Partial<SectionIntro> | null;
+    projects?: Partial<SectionIntro> | null;
+    contact?: Partial<SectionIntro> | null;
+  } | null | undefined
+): PageSections {
+  return {
+    about: mergeAboutSection(data?.about, staticSections.about),
+    services: mergeSectionIntro(data?.services, staticSections.services),
+    projects: mergeSectionIntro(data?.projects, staticSections.projects),
+    contact: mergeSectionIntro(data?.contact, staticSections.contact),
+  };
+}
 
 type SanitySiteSettings = {
   businessName?: string;
   tagline?: string;
   description?: string;
   descriptionCta?: string;
-  aboutSection?: SanitySectionIntro & {
-    description2?: string;
-    highlights?: string[];
-  };
-  servicesSection?: SanitySectionIntro;
-  projectsSection?: SanitySectionIntro & {
-    projectFilters?: ProjectCategory[];
-  };
-  contactSection?: SanitySectionIntro;
+  sections?: {
+    about?: Partial<AboutSection> | null;
+    services?: Partial<SectionIntro> | null;
+    projects?: Partial<SectionIntro> | null;
+    contact?: Partial<SectionIntro> | null;
+  } | null;
   email?: { business?: string; personal?: string };
   phone?: string;
   whatsapp?: string;
@@ -82,48 +108,6 @@ type SanitySiteSettings = {
     image?: SanityImage;
   };
 };
-
-function mapSectionIntro(
-  data: SanitySectionIntro | undefined,
-  fallback: SectionIntro
-): SectionIntro {
-  return {
-    eyebrow: data?.eyebrow?.trim() || fallback.eyebrow,
-    title: data?.title?.trim() || fallback.title,
-    titleHighlight: data?.titleHighlight?.trim() || fallback.titleHighlight,
-    description: data?.description?.trim() || fallback.description,
-    pageTitle: data?.pageTitle?.trim() || fallback.pageTitle,
-    pageDescription: data?.pageDescription?.trim() || fallback.pageDescription,
-  };
-}
-
-function mapPageSections(data: SanitySiteSettings): PageSections {
-  const fallback = defaultPageSections;
-
-  const about: AboutSection = {
-    ...mapSectionIntro(data.aboutSection, fallback.about),
-    description2:
-      data.aboutSection?.description2?.trim() || fallback.about.description2,
-    highlights:
-      data.aboutSection?.highlights?.filter(Boolean) ||
-      fallback.about.highlights,
-  };
-
-  const projects: ProjectsSection = {
-    ...mapSectionIntro(data.projectsSection, fallback.projects),
-    projectFilters:
-      data.projectsSection?.projectFilters?.filter(
-        (item) => item.id && item.label
-      ) || fallback.projects.projectFilters,
-  };
-
-  return {
-    about,
-    services: mapSectionIntro(data.servicesSection, fallback.services),
-    projects,
-    contact: mapSectionIntro(data.contactSection, fallback.contact),
-  };
-}
 
 function mapSiteSettings(
   data: SanitySiteSettings,
@@ -175,6 +159,22 @@ function mapSiteSettings(
   };
 }
 
+function isUsableService(
+  item: { title?: string; description?: string } | null | undefined
+): boolean {
+  return Boolean(item?.title?.trim() && item?.description?.trim());
+}
+
+function isUsableProject(
+  item: { title?: string; description?: string } | null | undefined
+): boolean {
+  return Boolean(item?.title?.trim() && item?.description?.trim());
+}
+
+function isUsableStat(item: { value?: string; label?: string } | null | undefined): boolean {
+  return Boolean(item?.value?.trim() && item?.label?.trim());
+}
+
 export const getContent = cache(async (): Promise<SiteContent> => {
   if (!isSanityConfigured || !sanityClient) {
     return staticContent;
@@ -207,49 +207,58 @@ export const getContent = cache(async (): Promise<SiteContent> => {
       sanityClient.fetch<Array<{ value?: string; label?: string }>>(statsQuery),
     ]);
 
-    if (!settings) {
-      return staticContent;
-    }
+    const usableServices = (services ?? []).filter(isUsableService);
+    const usableProjects = (projects ?? []).filter(isUsableProject);
+    const usableStats = (stats ?? []).filter(isUsableStat);
 
     const mappedProjects: Project[] =
-      projects.length > 0
-        ? projects.map((item, index) => ({
+      usableProjects.length > 0
+        ? usableProjects.map((item, index) => ({
             id: item._id || String(index),
-            title: item.title || "Untitled Project",
-            description: item.description || "",
+            title: item.title!.trim(),
+            description: item.description!.trim(),
             image:
               imageUrl(
                 item.image,
                 staticProjects[index]?.image || "/projects/ecommerce.svg"
               ) || "/projects/ecommerce.svg",
-            tags: item.tags || [],
-            category: item.category || "web",
-            liveUrl: item.liveUrl || undefined,
-            githubUrl: item.githubUrl || undefined,
-            featured: Boolean(item.featured),
+            tags: item.tags?.length ? item.tags : staticProjects[index]?.tags || [],
+            category: item.category || staticProjects[index]?.category || "web",
+            liveUrl: item.liveUrl || staticProjects[index]?.liveUrl || undefined,
+            githubUrl: item.githubUrl || staticProjects[index]?.githubUrl || undefined,
+            featured: item.featured ?? staticProjects[index]?.featured ?? false,
           }))
         : staticContent.projects;
 
     const mappedServices: Service[] =
-      services.length > 0
-        ? services.map((item) => ({
-            icon: (item.icon as ServiceIcon) || "Code2",
-            title: item.title || "",
-            description: item.description || "",
+      usableServices.length > 0
+        ? usableServices.map((item, index) => ({
+            icon: (item.icon as ServiceIcon) || staticServices[index]?.icon || "Code2",
+            title: item.title!.trim(),
+            description: item.description!.trim(),
           }))
         : staticContent.services;
 
     const mappedStats: Stat[] =
-      stats.length > 0
-        ? stats.map((item) => ({
-            value: item.value || "",
-            label: item.label || "",
+      usableStats.length > 0
+        ? usableStats.map((item) => ({
+            value: item.value!.trim(),
+            label: item.label!.trim(),
           }))
         : staticContent.stats;
 
+    if (!settings) {
+      return {
+        ...staticContent,
+        services: mappedServices,
+        projects: mappedProjects,
+        stats: mappedStats,
+      };
+    }
+
     return {
       siteConfig: mapSiteSettings(settings, { useSanityContactFields: true }),
-      pageSections: mapPageSections(settings),
+      sections: mergePageSections(settings.sections),
       services: mappedServices,
       projects: mappedProjects,
       stats: mappedStats,

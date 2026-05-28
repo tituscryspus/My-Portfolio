@@ -11,10 +11,10 @@ import {
   Shield,
   LucideIcon,
 } from "lucide-react";
-import SectionIntro from "@/components/SectionIntro";
+import { pageSections as defaultSections } from "@/data/sections";
 import { services as defaultServices, siteConfig as defaultSiteConfig } from "@/data/site";
-import { defaultPageSections } from "@/data/sections";
-import type { SectionIntro as SectionIntroContent, Service, SiteConfig } from "@/types/content";
+import type { SectionIntro, Service, SiteConfig } from "@/types/content";
+import SectionHeading from "./SectionHeading";
 
 const iconMap: Record<string, LucideIcon> = {
   Code2,
@@ -28,12 +28,12 @@ const iconMap: Record<string, LucideIcon> = {
 export default function Services({
   siteConfig = defaultSiteConfig,
   services = defaultServices as Service[],
-  section = defaultPageSections.services,
+  section = defaultSections.services,
   standalone = false,
 }: {
   siteConfig?: SiteConfig;
   services?: Service[];
-  section?: SectionIntroContent;
+  section?: SectionIntro;
   standalone?: boolean;
 }) {
   return (
@@ -52,7 +52,7 @@ export default function Services({
       </div>
 
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        {!standalone && <SectionIntro section={section} />}
+        {!standalone && <SectionHeading section={section} />}
 
         <div
           className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-3 ${standalone ? "" : "mt-16"}`}

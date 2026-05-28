@@ -16,21 +16,15 @@ export default async function Home() {
       <About
         siteConfig={content.siteConfig}
         stats={content.stats}
-        section={content.pageSections.about}
+        section={content.sections.about}
       />
       <Services
         siteConfig={content.siteConfig}
         services={content.services}
-        section={content.pageSections.services}
+        section={content.sections.services}
       />
-      <Projects
-        projects={content.projects}
-        section={content.pageSections.projects}
-      />
-      <Contact
-        siteConfig={content.siteConfig}
-        section={content.pageSections.contact}
-      />
+      <Projects projects={content.projects} section={content.sections.projects} />
+      <Contact siteConfig={content.siteConfig} section={content.sections.contact} />
     </>
   );
 }
