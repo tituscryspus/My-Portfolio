@@ -6,13 +6,14 @@ import { getContent } from "@/lib/content";
 export const revalidate = 60;
 
 export default async function ServicesPage() {
-  const { siteConfig, services } = await getContent();
+  const { siteConfig, services, pageSections } = await getContent();
+  const { services: servicesSection } = pageSections;
 
   return (
     <PageShell>
       <PageHeader
-        title="Our Services"
-        description="Comprehensive technology solutions tailored to your business needs."
+        title={servicesSection.pageTitle}
+        description={servicesSection.pageDescription}
       />
       <Services siteConfig={siteConfig} services={services} standalone />
     </PageShell>

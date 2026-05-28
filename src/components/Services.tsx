@@ -11,8 +11,10 @@ import {
   Shield,
   LucideIcon,
 } from "lucide-react";
+import SectionIntro from "@/components/SectionIntro";
 import { services as defaultServices, siteConfig as defaultSiteConfig } from "@/data/site";
-import type { Service, SiteConfig } from "@/types/content";
+import { defaultPageSections } from "@/data/sections";
+import type { SectionIntro as SectionIntroContent, Service, SiteConfig } from "@/types/content";
 
 const iconMap: Record<string, LucideIcon> = {
   Code2,
@@ -26,10 +28,12 @@ const iconMap: Record<string, LucideIcon> = {
 export default function Services({
   siteConfig = defaultSiteConfig,
   services = defaultServices as Service[],
+  section = defaultPageSections.services,
   standalone = false,
 }: {
   siteConfig?: SiteConfig;
   services?: Service[];
+  section?: SectionIntroContent;
   standalone?: boolean;
 }) {
   return (
@@ -48,27 +52,7 @@ export default function Services({
       </div>
 
       <div className="mx-auto max-w-7xl px-6 lg:px-8">
-        {!standalone && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mx-auto max-w-2xl text-center"
-          >
-            <span className="text-sm font-semibold uppercase tracking-wider text-primary">
-              Our Services
-            </span>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
-              Solutions Tailored to{" "}
-              <span className="gradient-text">Your Needs</span>
-            </h2>
-            <p className="mt-4 text-lg text-muted">
-              From concept to deployment, we offer comprehensive technology
-              services to help your business thrive in the digital age.
-            </p>
-          </motion.div>
-        )}
+        {!standalone && <SectionIntro section={section} />}
 
         <div
           className={`grid gap-6 sm:grid-cols-2 lg:grid-cols-3 ${standalone ? "" : "mt-16"}`}

@@ -13,10 +13,24 @@ export default async function Home() {
   return (
     <>
       <Hero siteConfig={content.siteConfig} />
-      <About siteConfig={content.siteConfig} stats={content.stats} />
-      <Services siteConfig={content.siteConfig} services={content.services} />
-      <Projects projects={content.projects} />
-      <Contact siteConfig={content.siteConfig} />
+      <About
+        siteConfig={content.siteConfig}
+        stats={content.stats}
+        section={content.pageSections.about}
+      />
+      <Services
+        siteConfig={content.siteConfig}
+        services={content.services}
+        section={content.pageSections.services}
+      />
+      <Projects
+        projects={content.projects}
+        section={content.pageSections.projects}
+      />
+      <Contact
+        siteConfig={content.siteConfig}
+        section={content.pageSections.contact}
+      />
     </>
   );
 }

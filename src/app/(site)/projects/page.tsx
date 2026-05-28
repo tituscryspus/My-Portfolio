@@ -6,15 +6,20 @@ import { getContent } from "@/lib/content";
 export const revalidate = 60;
 
 export default async function ProjectsPage() {
-  const { projects } = await getContent();
+  const { projects, pageSections } = await getContent();
+  const { projects: projectsSection } = pageSections;
 
   return (
     <PageShell>
       <PageHeader
-        title="Our Projects"
-        description="Explore the digital products and solutions we've built for clients."
+        title={projectsSection.pageTitle}
+        description={projectsSection.pageDescription}
       />
-      <Projects projects={projects} standalone />
+      <Projects
+        projects={projects}
+        section={projectsSection}
+        standalone
+      />
     </PageShell>
   );
 }

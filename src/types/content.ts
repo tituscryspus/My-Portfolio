@@ -62,8 +62,39 @@ export interface Stat {
   label: string;
 }
 
+export interface SectionIntro {
+  eyebrow: string;
+  title: string;
+  titleHighlight: string;
+  description: string;
+  pageTitle: string;
+  pageDescription: string;
+}
+
+export interface AboutSection extends SectionIntro {
+  description2: string;
+  highlights: string[];
+}
+
+export interface ProjectCategory {
+  id: string;
+  label: string;
+}
+
+export interface ProjectsSection extends SectionIntro {
+  projectFilters: ProjectCategory[];
+}
+
+export interface PageSections {
+  about: AboutSection;
+  services: SectionIntro;
+  projects: ProjectsSection;
+  contact: SectionIntro;
+}
+
 export interface SiteContent {
   siteConfig: SiteConfig;
+  pageSections: PageSections;
   services: Service[];
   projects: Project[];
   stats: Stat[];

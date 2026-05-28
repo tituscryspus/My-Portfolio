@@ -1,4 +1,5 @@
 import { defineField, defineType } from "sanity";
+import { sectionIntroFields } from "./sectionFields";
 
 export const siteSettings = defineType({
   name: "siteSettings",
@@ -6,6 +7,7 @@ export const siteSettings = defineType({
   type: "document",
   groups: [
     { name: "general", title: "General", default: true },
+    { name: "sections", title: "Page Sections" },
     { name: "contact", title: "Contact" },
     { name: "images", title: "Images" },
     { name: "founder", title: "Founder" },
@@ -37,6 +39,78 @@ export const siteSettings = defineType({
       type: "string",
       group: "general",
       description: 'Shown on its own line, e.g. "Partner with us to build the future."',
+    }),
+    defineField({
+      name: "aboutSection",
+      title: "About Section",
+      type: "object",
+      group: "sections",
+      fields: [
+        ...sectionIntroFields(),
+        defineField({
+          name: "description2",
+          title: "Second Paragraph",
+          type: "text",
+          rows: 3,
+        }),
+        defineField({
+          name: "highlights",
+          title: "Bullet Points",
+          type: "array",
+          of: [{ type: "string" }],
+        }),
+      ],
+    }),
+    defineField({
+      name: "servicesSection",
+      title: "Services Section",
+      type: "object",
+      group: "sections",
+      fields: sectionIntroFields(),
+    }),
+    defineField({
+      name: "projectsSection",
+      title: "Portfolio Section",
+      type: "object",
+      group: "sections",
+      fields: [
+        ...sectionIntroFields(),
+        defineField({
+          name: "projectFilters",
+          title: "Category Filters",
+          type: "array",
+          of: [
+            {
+              type: "object",
+              fields: [
+                {
+                  name: "id",
+                  title: "Category ID",
+                  type: "string",
+                  description: 'Use "all", "web", "mobile", "fullstack", or "design"',
+                  validation: (rule) => rule.required(),
+                },
+                {
+                  name: "label",
+                  title: "Button Label",
+                  type: "string",
+                  validation: (rule) => rule.required(),
+                },
+              ],
+              preview: {
+                select: { title: "label", subtitle: "id" },
+              },
+            },
+          ],
+        }),
+      ],
+    }),
+    defineField({
+      name: "contactSection",
+      title: "Contact Section",
+      type: "object",
+      group: "sections",
+      fields: sectionIntroFields(),
     }),
     defineField({
       name: "email",

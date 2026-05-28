@@ -1,6 +1,7 @@
 import { cache } from "react";
 import { siteConfig as staticSiteConfig, services as staticServices, stats as staticStats } from "@/data/site";
 import { projects as staticProjects } from "@/data/projects";
+import { defaultPageSections } from "@/data/sections";
 import { sanityClient } from "@/sanity/lib/client";
 import { urlForImage } from "@/sanity/lib/image";
 import {
@@ -11,7 +12,12 @@ import {
 } from "@/sanity/lib/queries";
 import { isSanityConfigured } from "@/sanity/env";
 import type {
+  AboutSection,
+  PageSections,
   Project,
+  ProjectCategory,
+  ProjectsSection,
+  SectionIntro,
   Service,
   ServiceIcon,
   SiteConfig,
@@ -21,6 +27,7 @@ import type {
 
 const staticContent: SiteContent = {
   siteConfig: staticSiteConfig,
+  pageSections: defaultPageSections,
   services: staticServices as Service[],
   projects: staticProjects,
   stats: staticStats,
@@ -34,11 +41,29 @@ function imageUrl(image: SanityImage, fallback: string): string {
   return url || fallback;
 }
 
+type SanitySectionIntro = {
+  eyebrow?: string;
+  title?: string;
+  titleHighlight?: string;
+  description?: string;
+  pageTitle?: string;
+  pageDescription?: string;
+};
+
 type SanitySiteSettings = {
   businessName?: string;
   tagline?: string;
   description?: string;
   descriptionCta?: string;
+  aboutSection?: SanitySectionIntro & {
+    description2?: string;
+    highlights?: string[];
+  };
+  servicesSection?: SanitySectionIntro;
+  projectsSection?: SanitySectionIntro & {
+    projectFilters?: ProjectCategory[];
+  };
+  contactSection?: SanitySectionIntro;
   email?: { business?: string; personal?: string };
   phone?: string;
   whatsapp?: string;
@@ -57,6 +82,48 @@ type SanitySiteSettings = {
     image?: SanityImage;
   };
 };
+
+function mapSectionIntro(
+  data: SanitySectionIntro | undefined,
+  fallback: SectionIntro
+): SectionIntro {
+  return {
+    eyebrow: data?.eyebrow?.trim() || fallback.eyebrow,
+    title: data?.title?.trim() || fallback.title,
+    titleHighlight: data?.titleHighlight?.trim() || fallback.titleHighlight,
+    description: data?.description?.trim() || fallback.description,
+    pageTitle: data?.pageTitle?.trim() || fallback.pageTitle,
+    pageDescription: data?.pageDescription?.trim() || fallback.pageDescription,
+  };
+}
+
+function mapPageSections(data: SanitySiteSettings): PageSections {
+  const fallback = defaultPageSections;
+
+  const about: AboutSection = {
+    ...mapSectionIntro(data.aboutSection, fallback.about),
+    description2:
+      data.aboutSection?.description2?.trim() || fallback.about.description2,
+    highlights:
+      data.aboutSection?.highlights?.filter(Boolean) ||
+      fallback.about.highlights,
+  };
+
+  const projects: ProjectsSection = {
+    ...mapSectionIntro(data.projectsSection, fallback.projects),
+    projectFilters:
+      data.projectsSection?.projectFilters?.filter(
+        (item) => item.id && item.label
+      ) || fallback.projects.projectFilters,
+  };
+
+  return {
+    about,
+    services: mapSectionIntro(data.servicesSection, fallback.services),
+    projects,
+    contact: mapSectionIntro(data.contactSection, fallback.contact),
+  };
+}
 
 function mapSiteSettings(
   data: SanitySiteSettings,
@@ -182,6 +249,7 @@ export const getContent = cache(async (): Promise<SiteContent> => {
 
     return {
       siteConfig: mapSiteSettings(settings, { useSanityContactFields: true }),
+      pageSections: mapPageSections(settings),
       services: mappedServices,
       projects: mappedProjects,
       stats: mappedStats,

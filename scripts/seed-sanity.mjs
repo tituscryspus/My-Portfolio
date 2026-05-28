@@ -75,6 +75,61 @@ const siteSettings = {
     title: "Computer Scientist",
     bio: "I am a Computer Scientist and the founder of Tkryce Tech Solutions. With a deep passion for technology and problem-solving, I specialize in building scalable web applications, mobile solutions, and enterprise software that help businesses grow and innovate in the digital age.",
   },
+  aboutSection: {
+    eyebrow: "About Us",
+    title: "Technology Partners You Can",
+    titleHighlight: "Trust",
+    description:
+      "Tkryce Tech Solutions is a forward-thinking technology company founded by Lukaye Titus Cryspus, a Computer Scientist specializing in custom software development, digital products, and IT consulting. We combine technical excellence with business insight to deliver solutions that make a real impact.",
+    description2:
+      "From startups to enterprises, we help organizations navigate their digital transformation journeys with confidence — backed by computer science expertise and real-world engineering experience.",
+    highlights: [
+      "End-to-end project delivery from concept to launch",
+      "Agile methodology with transparent communication",
+      "Scalable solutions built for long-term growth",
+      "Dedicated support and maintenance packages",
+    ],
+    pageTitle: "About Us",
+    pageDescription:
+      "Meet Lukaye Titus Cryspus and learn about Tkryce Tech Solutions.",
+  },
+  servicesSection: {
+    eyebrow: "Our Services",
+    title: "Solutions Tailored to",
+    titleHighlight: "Your Needs",
+    description:
+      "From concept to deployment, we offer comprehensive technology services to help your business thrive in the digital age.",
+    pageTitle: "Our Services",
+    pageDescription:
+      "Comprehensive technology solutions tailored to your business needs.",
+  },
+  projectsSection: {
+    eyebrow: "Portfolio",
+    title: "Projects We've",
+    titleHighlight: "Built",
+    description:
+      "Explore our latest work — from startups to enterprise solutions, each project crafted with precision and passion.",
+    pageTitle: "Our Projects",
+    pageDescription:
+      "Explore the digital products and solutions we've built for clients.",
+    projectFilters: [
+      { id: "all", label: "All Projects" },
+      { id: "web", label: "Web Apps" },
+      { id: "mobile", label: "Mobile" },
+      { id: "fullstack", label: "Full Stack" },
+      { id: "design", label: "Design" },
+    ],
+  },
+  contactSection: {
+    eyebrow: "Contact",
+    title: "Let's Build Something",
+    titleHighlight: "Great",
+    description:
+      "Whether you need a business partner or want to connect personally, we'd love to hear from you.",
+    pageTitle: "Contact Us",
+    pageDescription:
+      "Reach out for business inquiries or connect with Lukaye personally.",
+  },
 };
 
 const services = [

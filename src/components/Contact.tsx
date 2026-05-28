@@ -17,17 +17,21 @@ import {
   Loader2,
   AlertCircle,
 } from "lucide-react";
+import SectionIntro from "@/components/SectionIntro";
 import { siteConfig as defaultSiteConfig } from "@/data/site";
+import { defaultPageSections } from "@/data/sections";
 import { buildWhatsAppUrl } from "@/lib/whatsapp";
-import type { SiteConfig } from "@/types/content";
+import type { SectionIntro as SectionIntroContent, SiteConfig } from "@/types/content";
 
 type ContactType = "business" | "personal";
 
 export default function Contact({
   siteConfig = defaultSiteConfig,
+  section = defaultPageSections.contact,
   standalone = false,
 }: {
   siteConfig?: SiteConfig;
+  section?: SectionIntroContent;
   standalone?: boolean;
 }) {
   const [contactType, setContactType] = useState<ContactType>("business");
@@ -136,27 +140,7 @@ export default function Contact({
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-        {!standalone && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mx-auto max-w-2xl text-center"
-          >
-            <span className="text-sm font-semibold uppercase tracking-wider text-primary">
-              Contact
-            </span>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
-              Let&apos;s Build Something{" "}
-              <span className="gradient-text">Great</span>
-            </h2>
-            <p className="mt-4 text-lg text-muted">
-              Whether you need a business partner or want to connect personally,
-              we&apos;d love to hear from you.
-            </p>
-          </motion.div>
-        )}
+        {!standalone && <SectionIntro section={section} />}
 
         <div className={`flex justify-center gap-4 ${standalone ? "" : "mt-12"}`}>
           <button

@@ -4,7 +4,10 @@ import { useState } from "react";
 import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, Github, ArrowUpRight } from "lucide-react";
-import { projects as defaultProjects, categories, type Project } from "@/data/projects";
+import SectionIntro from "@/components/SectionIntro";
+import { projects as defaultProjects } from "@/data/projects";
+import { defaultPageSections } from "@/data/sections";
+import type { Project, ProjectCategory, ProjectsSection } from "@/types/content";
 
 function ProjectCard({ project }: { project: Project }) {
   const isExternal = project.image.startsWith("http");
@@ -82,11 +85,14 @@ function ProjectCard({ project }: { project: Project }) {
 
 export default function Projects({
   projects = defaultProjects,
+  section = defaultPageSections.projects,
   standalone = false,
 }: {
   projects?: Project[];
+  section?: ProjectsSection;
   standalone?: boolean;
 }) {
+  const categories: ProjectCategory[] = section.projectFilters;
   const [activeCategory, setActiveCategory] = useState("all");
 
   const filtered =
@@ -101,27 +107,7 @@ export default function Projects({
       </div>
 
       <div className="relative mx-auto max-w-7xl px-6 lg:px-8">
-        {!standalone && (
-          <motion.div
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ duration: 0.6 }}
-            className="mx-auto max-w-2xl text-center"
-          >
-            <span className="text-sm font-semibold uppercase tracking-wider text-primary">
-              Portfolio
-            </span>
-            <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
-              Projects We&apos;ve{" "}
-              <span className="gradient-text">Built</span>
-            </h2>
-            <p className="mt-4 text-lg text-muted">
-              Explore our latest work — from startups to enterprise solutions,
-              each project crafted with precision and passion.
-            </p>
-          </motion.div>
-        )}
+        {!standalone && <SectionIntro section={section} />}
 
         <motion.div
           initial={{ opacity: 0, y: 20 }}
