@@ -1,11 +1,18 @@
 import { defineArrayMember, defineField, defineType } from "sanity";
+import { CategorySelectInput } from "../components/CategorySelectInput";
+import { TechnologiesSelectInput } from "../components/TechnologiesSelectInput";
+
+const blockInlineCreate = {
+  disableNew: true,
+  creationTypeFilter: () => [],
+};
 
 export const project = defineType({
   name: "project",
   title: "Project",
   type: "document",
   description:
-    "Assign an existing category and technologies only. Add new categories under Project Categories and new technologies under Technologies.",
+    "Pick a category and technologies from your existing lists. Add new ones only under Portfolio → Project Categories or Technologies.",
   fields: [
     defineField({
       name: "title",
@@ -31,11 +38,10 @@ export const project = defineType({
       title: "Category",
       type: "reference",
       to: [{ type: "projectCategory" }],
-      description:
-        "Select one category from the list. To add a new category, go to Project Categories in the sidebar first.",
-      options: {
-        disableNew: true,
+      components: {
+        input: CategorySelectInput,
       },
+      options: blockInlineCreate,
       validation: (rule) => rule.required(),
     }),
     defineField({
@@ -46,13 +52,12 @@ export const project = defineType({
         defineArrayMember({
           type: "reference",
           to: [{ type: "technology" }],
-          options: {
-            disableNew: true,
-          },
+          options: blockInlineCreate,
         }),
       ],
-      description:
-        "Select technologies that apply to this project. Click Add item, then search and pick from the list. To add a new technology, go to Technologies in the sidebar first.",
+      components: {
+        input: TechnologiesSelectInput,
+      },
     }),
     defineField({
       name: "liveUrl",

@@ -23,5 +23,22 @@ export default defineConfig({
       }
       return prev;
     },
+    newDocumentOptions: (prev, { creationContext }) => {
+      const parentType =
+        creationContext &&
+        "parentSchemaType" in creationContext &&
+        typeof creationContext.parentSchemaType === "string"
+          ? creationContext.parentSchemaType
+          : null;
+
+      if (parentType === "project") {
+        return prev.filter(
+          (option) =>
+            option.templateId !== "projectCategory" && option.templateId !== "technology"
+        );
+      }
+
+      return prev;
+    },
   },
 });
