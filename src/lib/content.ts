@@ -175,6 +175,68 @@ function isUsableStat(item: { value?: string; label?: string } | null | undefine
   return Boolean(item?.value?.trim() && item?.label?.trim());
 }
 
+function mapServicesFromSanity(
+  items: Array<{ icon?: string; title?: string; description?: string }>,
+  cmsActive: boolean
+): Service[] {
+  const usable = items.filter(isUsableService);
+  if (!cmsActive && usable.length === 0) {
+    return staticContent.services;
+  }
+  return usable.map((item, index) => ({
+    icon: (item.icon as ServiceIcon) || staticServices[index]?.icon || "Code2",
+    title: item.title!.trim(),
+    description: item.description!.trim(),
+  }));
+}
+
+function mapProjectsFromSanity(
+  items: Array<{
+    _id: string;
+    title?: string;
+    description?: string;
+    image?: SanityImage;
+    tags?: string[];
+    category?: Project["category"];
+    liveUrl?: string;
+    githubUrl?: string;
+    featured?: boolean;
+  }>,
+  cmsActive: boolean
+): Project[] {
+  const usable = items.filter(isUsableProject);
+  if (!cmsActive && usable.length === 0) {
+    return staticContent.projects;
+  }
+  return usable.map((item, index) => ({
+    id: item._id || String(index),
+    title: item.title!.trim(),
+    description: item.description!.trim(),
+    image:
+      imageUrl(item.image, staticProjects[index]?.image || "/projects/ecommerce.svg") ||
+      "/projects/ecommerce.svg",
+    tags: item.tags?.length ? item.tags : staticProjects[index]?.tags || [],
+    category: item.category || staticProjects[index]?.category || "web",
+    liveUrl: item.liveUrl || staticProjects[index]?.liveUrl || undefined,
+    githubUrl: item.githubUrl || staticProjects[index]?.githubUrl || undefined,
+    featured: item.featured ?? staticProjects[index]?.featured ?? false,
+  }));
+}
+
+function mapStatsFromSanity(
+  items: Array<{ value?: string; label?: string }>,
+  cmsActive: boolean
+): Stat[] {
+  const usable = items.filter(isUsableStat);
+  if (!cmsActive && usable.length === 0) {
+    return staticContent.stats;
+  }
+  return usable.map((item) => ({
+    value: item.value!.trim(),
+    label: item.label!.trim(),
+  }));
+}
+
 export const getContent = cache(async (): Promise<SiteContent> => {
   if (!isSanityConfigured || !sanityClient) {
     return staticContent;
@@ -207,61 +269,18 @@ export const getContent = cache(async (): Promise<SiteContent> => {
       sanityClient.fetch<Array<{ value?: string; label?: string }>>(statsQuery),
     ]);
 
-    const usableServices = (services ?? []).filter(isUsableService);
-    const usableProjects = (projects ?? []).filter(isUsableProject);
-    const usableStats = (stats ?? []).filter(isUsableStat);
+    const cmsActive = Boolean(settings);
 
-    const mappedProjects: Project[] =
-      usableProjects.length > 0
-        ? usableProjects.map((item, index) => ({
-            id: item._id || String(index),
-            title: item.title!.trim(),
-            description: item.description!.trim(),
-            image:
-              imageUrl(
-                item.image,
-                staticProjects[index]?.image || "/projects/ecommerce.svg"
-              ) || "/projects/ecommerce.svg",
-            tags: item.tags?.length ? item.tags : staticProjects[index]?.tags || [],
-            category: item.category || staticProjects[index]?.category || "web",
-            liveUrl: item.liveUrl || staticProjects[index]?.liveUrl || undefined,
-            githubUrl: item.githubUrl || staticProjects[index]?.githubUrl || undefined,
-            featured: item.featured ?? staticProjects[index]?.featured ?? false,
-          }))
-        : staticContent.projects;
-
-    const mappedServices: Service[] =
-      usableServices.length > 0
-        ? usableServices.map((item, index) => ({
-            icon: (item.icon as ServiceIcon) || staticServices[index]?.icon || "Code2",
-            title: item.title!.trim(),
-            description: item.description!.trim(),
-          }))
-        : staticContent.services;
-
-    const mappedStats: Stat[] =
-      usableStats.length > 0
-        ? usableStats.map((item) => ({
-            value: item.value!.trim(),
-            label: item.label!.trim(),
-          }))
-        : staticContent.stats;
-
-    if (!settings) {
-      return {
-        ...staticContent,
-        services: mappedServices,
-        projects: mappedProjects,
-        stats: mappedStats,
-      };
+    if (!cmsActive) {
+      return staticContent;
     }
 
     return {
-      siteConfig: mapSiteSettings(settings, { useSanityContactFields: true }),
-      sections: mergePageSections(settings.sections),
-      services: mappedServices,
-      projects: mappedProjects,
-      stats: mappedStats,
+      siteConfig: mapSiteSettings(settings!, { useSanityContactFields: true }),
+      sections: mergePageSections(settings!.sections),
+      services: mapServicesFromSanity(services ?? [], cmsActive),
+      projects: mapProjectsFromSanity(projects ?? [], cmsActive),
+      stats: mapStatsFromSanity(stats ?? [], cmsActive),
     };
   } catch (error) {
     console.error("Failed to fetch Sanity content:", error);

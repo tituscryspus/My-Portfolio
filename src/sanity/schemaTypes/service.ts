@@ -13,6 +13,8 @@ export const service = defineType({
   name: "service",
   title: "Service",
   type: "document",
+  description:
+    "Services on your homepage. To delete one: open it, click ⋮ (top right), then Delete.",
   fields: [
     defineField({
       name: "title",

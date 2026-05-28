@@ -11,6 +11,8 @@ export const project = defineType({
   name: "project",
   title: "Project",
   type: "document",
+  description:
+    "Portfolio projects. To delete one: open it, click ⋮ (top right), then Delete.",
   fields: [
     defineField({
       name: "title",

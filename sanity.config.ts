@@ -16,4 +16,12 @@ export default defineConfig({
   schema: {
     types: schemaTypes,
   },
+  document: {
+    actions: (prev, { schemaType }) => {
+      if (schemaType === "siteSettings") {
+        return prev.filter(({ action }) => action !== "delete");
+      }
+      return prev;
+    },
+  },
 });
