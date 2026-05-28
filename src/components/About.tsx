@@ -6,6 +6,7 @@ import { CheckCircle2 } from "lucide-react";
 import { pageSections as defaultSections } from "@/data/sections";
 import { siteConfig as defaultSiteConfig, stats as defaultStats } from "@/data/site";
 import type { AboutSection, SiteConfig, Stat } from "@/types/content";
+import AnimatedStat from "./AnimatedStat";
 import SectionHeading from "./SectionHeading";
 
 export default function About({
@@ -108,17 +109,12 @@ export default function About({
 
             <div className="mt-8 grid grid-cols-2 gap-4">
               {stats.map((stat, i) => (
-                <motion.div
+                <AnimatedStat
                   key={stat.label}
-                  initial={{ opacity: 0, y: 20 }}
-                  whileInView={{ opacity: 1, y: 0 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.4, delay: i * 0.1 }}
-                  className="glass rounded-xl p-6 text-center"
-                >
-                  <div className="text-3xl font-bold gradient-text">{stat.value}</div>
-                  <div className="mt-1 text-sm text-muted">{stat.label}</div>
-                </motion.div>
+                  value={stat.value}
+                  label={stat.label}
+                  delay={i * 120}
+                />
               ))}
             </div>
           </motion.div>

@@ -5,7 +5,7 @@ import Projects from "@/components/Projects";
 import Contact from "@/components/Contact";
 import { getContent } from "@/lib/content";
 
-export const revalidate = 60;
+export const revalidate = 30;
 
 export default async function Home() {
   const content = await getContent();

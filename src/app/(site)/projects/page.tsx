@@ -3,7 +3,7 @@ import PageHeader from "@/components/PageHeader";
 import PageShell from "@/components/PageShell";
 import { getContent } from "@/lib/content";
 
-export const revalidate = 60;
+export const revalidate = 30;
 
 export default async function ProjectsPage() {
   const { projects, projectCategories, sections } = await getContent();

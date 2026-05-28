@@ -39,6 +39,59 @@
   .glow {
     box-shadow: 0 0 60px -15px rgba(6, 182, 212, 0.4);
   }
+
+  .animate-orb {
+    animation: orb-float 14s ease-in-out infinite;
+  }
+
+  .animate-orb-delayed {
+    animation: orb-float 18s ease-in-out infinite 3s;
+  }
+
+  .animate-orb-slow {
+    animation: orb-float 22s ease-in-out infinite 6s;
+  }
+
+  .gradient-text-animated {
+    background-size: 200% auto;
+    animation: gradient-shift 6s ease-in-out infinite;
+  }
+}
+
+@keyframes orb-float {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(24px, -18px) scale(1.06);
+  }
+  66% {
+    transform: translate(-16px, 12px) scale(0.96);
+  }
+}
+
+@keyframes gradient-shift {
+  0%,
+  100% {
+    background-position: 0% center;
+  }
+  50% {
+    background-position: 100% center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-orb,
+  .animate-orb-delayed,
+  .animate-orb-slow,
+  .gradient-text-animated {
+    animation: none;
+  }
+
+  html {
+    scroll-behavior: auto;
+  }
 }
 
 /* Custom scrollbar */

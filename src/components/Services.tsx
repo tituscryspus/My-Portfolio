@@ -66,8 +66,8 @@ export default function Services({
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.5, delay: i * 0.08 }}
-                whileHover={{ y: -4 }}
-                className="group glass rounded-2xl p-8 transition-all hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5"
+                whileHover={{ y: -6, scale: 1.02 }}
+                className="group glass rounded-2xl p-8 transition-all hover:border-primary/40 hover:shadow-xl hover:shadow-primary/10"
               >
                 <div className="mb-5 flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-primary/20 to-accent/20 transition-colors group-hover:from-primary/30 group-hover:to-accent/30">
                   {Icon && <Icon className="h-6 w-6 text-primary" />}

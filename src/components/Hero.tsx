@@ -24,8 +24,8 @@ export default function Hero({ siteConfig = defaultSiteConfig }: { siteConfig?: 
           unoptimized={siteConfig.images.hero.startsWith("http")}
         />
         <div className="absolute inset-0 bg-gradient-to-b from-background/40 via-background/80 to-background" />
-        <div className="absolute -left-40 top-20 h-96 w-96 rounded-full bg-primary/20 blur-[120px]" />
-        <div className="absolute -right-40 bottom-20 h-96 w-96 rounded-full bg-accent/20 blur-[120px]" />
+        <div className="animate-orb absolute -left-40 top-20 h-96 w-96 rounded-full bg-primary/25 blur-[120px]" />
+        <div className="animate-orb-delayed absolute -right-40 bottom-20 h-96 w-96 rounded-full bg-accent/20 blur-[120px]" />
         <div
           className="absolute inset-0 opacity-[0.03]"
           style={{
@@ -56,7 +56,7 @@ export default function Hero({ siteConfig = defaultSiteConfig }: { siteConfig?: 
             >
               Building Digital Solutions
               <br />
-              <span className="gradient-text">That Drive Growth</span>
+              <span className="gradient-text gradient-text-animated">That Drive Growth</span>
             </motion.h1>
 
             <motion.p
@@ -100,27 +100,35 @@ export default function Hero({ siteConfig = defaultSiteConfig }: { siteConfig?: 
             transition={{ duration: 0.8, delay: 0.4 }}
             className="relative hidden lg:block"
           >
-            <div className="glass glow overflow-hidden rounded-2xl p-1">
+            <motion.div
+              animate={{ y: [0, -10, 0] }}
+              transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
+              className="glass glow overflow-hidden rounded-2xl p-1"
+            >
               <div className="relative aspect-[4/3] overflow-hidden rounded-xl">
                 <Image
                   src={siteConfig.images.workspace}
                   alt="Developer workspace with laptop and code"
                   fill
-                  className="object-cover"
+                  className="object-cover transition-transform duration-700 hover:scale-105"
                   sizes="(max-width: 1024px) 100vw, 50vw"
                   unoptimized={siteConfig.images.workspace.startsWith("http")}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/80 via-transparent to-transparent" />
               </div>
-            </div>
-            <div className="absolute -bottom-6 -left-6 glass rounded-xl p-4 shadow-xl">
+            </motion.div>
+            <motion.div
+              animate={{ y: [0, 6, 0] }}
+              transition={{ duration: 4, repeat: Infinity, ease: "easeInOut", delay: 0.5 }}
+              className="absolute -bottom-6 -left-6 glass rounded-xl p-4 shadow-xl"
+            >
               <div className="mb-2 flex items-center gap-2">
                 <div className="h-3 w-3 rounded-full bg-red-500" />
                 <div className="h-3 w-3 rounded-full bg-yellow-500" />
                 <div className="h-3 w-3 rounded-full bg-green-500" />
               </div>
               <p className="font-mono text-xs text-primary">tkryce.ready = true</p>
-            </div>
+            </motion.div>
           </motion.div>
         </div>
 

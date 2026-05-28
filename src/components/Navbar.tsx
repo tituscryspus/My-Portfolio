@@ -43,7 +43,7 @@ export default function Navbar({ siteConfig }: { siteConfig: SiteConfig }) {
 
         <ul className="hidden items-center gap-8 md:flex">
           {navLinks.map((link) => (
-            <li key={link.href}>
+            <li key={link.href} className="relative">
               <Link
                 href={link.href}
                 className={`text-sm font-medium transition-colors ${
@@ -54,6 +54,13 @@ export default function Navbar({ siteConfig }: { siteConfig: SiteConfig }) {
               >
                 {link.label}
               </Link>
+              {isActive(link.href) && (
+                <motion.span
+                  layoutId="nav-active"
+                  className="absolute -bottom-1 left-0 right-0 h-0.5 rounded-full bg-gradient-to-r from-primary to-accent"
+                  transition={{ type: "spring", stiffness: 380, damping: 30 }}
+                />
+              )}
             </li>
           ))}
         </ul>

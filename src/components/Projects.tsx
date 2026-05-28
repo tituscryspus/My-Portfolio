@@ -19,7 +19,8 @@ function ProjectCard({ project }: { project: Project }) {
       animate={{ opacity: 1, scale: 1 }}
       exit={{ opacity: 0, scale: 0.95 }}
       transition={{ duration: 0.3 }}
-      className="group glass overflow-hidden rounded-2xl"
+      whileHover={{ y: -6 }}
+      className="group glass overflow-hidden rounded-2xl transition-shadow hover:shadow-xl hover:shadow-primary/10"
     >
       <div className="relative aspect-video overflow-hidden bg-surface-light">
         <Image

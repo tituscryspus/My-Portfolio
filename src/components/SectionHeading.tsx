@@ -25,7 +25,7 @@ export default function SectionHeading({
       </span>
       <h2 className="mt-3 text-3xl font-bold tracking-tight md:text-4xl lg:text-5xl">
         {section.heading}{" "}
-        <span className="gradient-text">{section.headingHighlight}</span>
+        <span className="gradient-text gradient-text-animated">{section.headingHighlight}</span>
       </h2>
       {showDescription && (
         <p className="mt-4 text-lg text-muted">{section.description}</p>
