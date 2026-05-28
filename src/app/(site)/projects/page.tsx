@@ -6,7 +6,7 @@ import { getContent } from "@/lib/content";
 export const revalidate = 60;
 
 export default async function ProjectsPage() {
-  const { projects, sections } = await getContent();
+  const { projects, projectCategories, sections } = await getContent();
 
   return (
     <PageShell>
@@ -14,7 +14,12 @@ export default async function ProjectsPage() {
         title="Our Projects"
         description="Explore the digital products and solutions we've built for clients."
       />
-      <Projects projects={projects} section={sections.projects} standalone />
+      <Projects
+        projects={projects}
+        projectCategories={projectCategories}
+        section={sections.projects}
+        standalone
+      />
     </PageShell>
   );
 }

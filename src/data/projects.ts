@@ -1,14 +1,6 @@
-export interface Project {
-  id: string;
-  title: string;
-  description: string;
-  image: string;
-  tags: string[];
-  category: "web" | "mobile" | "fullstack" | "design";
-  liveUrl?: string;
-  githubUrl?: string;
-  featured: boolean;
-}
+import type { Project, ProjectCategory } from "@/types/content";
+
+export type { Project };
 
 export const projects: Project[] = [
   {
@@ -19,6 +11,7 @@ export const projects: Project[] = [
     image: "/projects/ecommerce.svg",
     tags: ["Next.js", "Stripe", "PostgreSQL", "Tailwind"],
     category: "fullstack",
+    categoryLabel: "Full Stack",
     liveUrl: "#",
     githubUrl: "#",
     featured: true,
@@ -31,6 +24,7 @@ export const projects: Project[] = [
     image: "/projects/healthcare.svg",
     tags: ["React", "Node.js", "MongoDB", "Chart.js"],
     category: "web",
+    categoryLabel: "Web Apps",
     liveUrl: "#",
     featured: true,
   },
@@ -42,6 +36,7 @@ export const projects: Project[] = [
     image: "/projects/fintech.svg",
     tags: ["React Native", "Firebase", "Plaid API"],
     category: "mobile",
+    categoryLabel: "Mobile",
     liveUrl: "#",
     featured: true,
   },
@@ -53,6 +48,7 @@ export const projects: Project[] = [
     image: "/projects/realestate.svg",
     tags: ["Vue.js", "Express", "PostgreSQL", "Mapbox"],
     category: "web",
+    categoryLabel: "Web Apps",
     liveUrl: "#",
     githubUrl: "#",
     featured: false,
@@ -65,6 +61,7 @@ export const projects: Project[] = [
     image: "/projects/analytics.svg",
     tags: ["Next.js", "Python", "Redis", "D3.js"],
     category: "fullstack",
+    categoryLabel: "Full Stack",
     liveUrl: "#",
     featured: false,
   },
@@ -76,6 +73,7 @@ export const projects: Project[] = [
     image: "/projects/restaurant.svg",
     tags: ["React", "Socket.io", "Node.js", "MySQL"],
     category: "fullstack",
+    categoryLabel: "Full Stack",
     liveUrl: "#",
     githubUrl: "#",
     featured: false,
@@ -89,3 +87,7 @@ export const categories = [
   { id: "fullstack", label: "Full Stack" },
   { id: "design", label: "Design" },
 ];
+
+export const projectCategories: ProjectCategory[] = categories.filter(
+  (category) => category.id !== "all"
+);

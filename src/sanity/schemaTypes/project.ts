@@ -1,12 +1,5 @@
 import { defineField, defineType } from "sanity";
 
-const categoryOptions = [
-  { title: "Web App", value: "web" },
-  { title: "Mobile", value: "mobile" },
-  { title: "Full Stack", value: "fullstack" },
-  { title: "Design", value: "design" },
-];
-
 export const project = defineType({
   name: "project",
   title: "Project",
@@ -39,13 +32,17 @@ export const project = defineType({
       type: "array",
       of: [{ type: "string" }],
       options: { layout: "tags" },
+      description:
+        "Type any technology name and press Enter to add it. Remove a tag with the × on each pill.",
     }),
     defineField({
       name: "category",
       title: "Category",
-      type: "string",
-      options: { list: categoryOptions },
-      initialValue: "web",
+      type: "reference",
+      to: [{ type: "projectCategory" }],
+      description:
+        "Choose an existing category or click + Create to add a new one (manage all categories under Project Categories in the sidebar).",
+      validation: (rule) => rule.required(),
     }),
     defineField({
       name: "liveUrl",
@@ -78,6 +75,10 @@ export const project = defineType({
     },
   ],
   preview: {
-    select: { title: "title", subtitle: "category", media: "image" },
+    select: {
+      title: "title",
+      subtitle: "category.title",
+      media: "image",
+    },
   },
 });

@@ -23,7 +23,11 @@ export default async function Home() {
         services={content.services}
         section={content.sections.services}
       />
-      <Projects projects={content.projects} section={content.sections.projects} />
+      <Projects
+        projects={content.projects}
+        projectCategories={content.projectCategories}
+        section={content.sections.projects}
+      />
       <Contact siteConfig={content.siteConfig} section={content.sections.contact} />
     </>
   );

@@ -24,13 +24,19 @@ export const servicesQuery = `*[_type == "service"] | order(order asc){
   description
 }`;
 
+export const projectCategoriesQuery = `*[_type == "projectCategory"] | order(order asc){
+  "categoryId": slug.current,
+  "label": title
+}`;
+
 export const projectsQuery = `*[_type == "project"] | order(order asc){
   _id,
   title,
   description,
   image,
   tags,
-  category,
+  "category": category->slug.current,
+  "categoryLabel": category->title,
   liveUrl,
   githubUrl,
   featured

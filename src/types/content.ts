@@ -51,11 +51,19 @@ export interface Project {
   description: string;
   image: string;
   tags: string[];
-  category: "web" | "mobile" | "fullstack" | "design";
+  category: string;
+  categoryLabel: string;
   liveUrl?: string;
   githubUrl?: string;
   featured: boolean;
 }
+
+export interface ProjectCategory {
+  id: string;
+  label: string;
+}
+
+export type ProjectFilter = ProjectCategory;
 
 export interface Stat {
   value: string;
@@ -69,5 +77,6 @@ export interface SiteContent {
   sections: import("@/data/sections").PageSections;
   services: Service[];
   projects: Project[];
+  projectCategories: ProjectCategory[];
   stats: Stat[];
 }

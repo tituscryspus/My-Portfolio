@@ -5,8 +5,9 @@ import Image from "next/image";
 import { motion, AnimatePresence } from "framer-motion";
 import { ExternalLink, Github, ArrowUpRight } from "lucide-react";
 import { pageSections as defaultSections } from "@/data/sections";
-import { projects as defaultProjects, categories, type Project } from "@/data/projects";
-import type { SectionIntro } from "@/types/content";
+import { projects as defaultProjects } from "@/data/projects";
+import { buildProjectFilters } from "@/lib/project-categories";
+import type { Project, ProjectCategory, SectionIntro } from "@/types/content";
 import SectionHeading from "./SectionHeading";
 
 function ProjectCard({ project }: { project: Project }) {
@@ -85,14 +86,17 @@ function ProjectCard({ project }: { project: Project }) {
 
 export default function Projects({
   projects = defaultProjects,
+  projectCategories = [],
   section = defaultSections.projects,
   standalone = false,
 }: {
   projects?: Project[];
+  projectCategories?: ProjectCategory[];
   section?: SectionIntro;
   standalone?: boolean;
 }) {
   const [activeCategory, setActiveCategory] = useState("all");
+  const filters = buildProjectFilters(projectCategories, projects);
 
   const filtered =
     activeCategory === "all"
@@ -115,7 +119,7 @@ export default function Projects({
           transition={{ duration: 0.5, delay: standalone ? 0 : 0.2 }}
           className={`flex flex-wrap justify-center gap-2 ${standalone ? "" : "mt-10"}`}
         >
-          {categories.map((cat) => (
+          {filters.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}

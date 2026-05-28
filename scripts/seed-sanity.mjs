@@ -115,6 +115,42 @@ const siteSettings = {
   },
 };
 
+const projectCategories = [
+  {
+    _id: "category-web",
+    _type: "projectCategory",
+    title: "Web Apps",
+    slug: { _type: "slug", current: "web" },
+    order: 0,
+  },
+  {
+    _id: "category-mobile",
+    _type: "projectCategory",
+    title: "Mobile",
+    slug: { _type: "slug", current: "mobile" },
+    order: 1,
+  },
+  {
+    _id: "category-fullstack",
+    _type: "projectCategory",
+    title: "Full Stack",
+    slug: { _type: "slug", current: "fullstack" },
+    order: 2,
+  },
+  {
+    _id: "category-design",
+    _type: "projectCategory",
+    title: "Design",
+    slug: { _type: "slug", current: "design" },
+    order: 3,
+  },
+];
+
+const categoryRef = (id) => ({
+  _type: "reference",
+  _ref: id,
+});
+
 const services = [
   {
     _id: "service-web-development",
@@ -171,7 +207,7 @@ const projects = [
     _id: "project-ecommerce-platform",
     title: "E-Commerce Platform",
     order: 0,
-    category: "fullstack",
+    category: categoryRef("category-fullstack"),
     featured: true,
     tags: ["Next.js", "Stripe", "PostgreSQL", "Tailwind"],
     description:
@@ -183,7 +219,7 @@ const projects = [
     _id: "project-healthcare-dashboard",
     title: "Healthcare Dashboard",
     order: 1,
-    category: "web",
+    category: categoryRef("category-web"),
     featured: true,
     tags: ["React", "Node.js", "MongoDB", "Chart.js"],
     description:
@@ -194,7 +230,7 @@ const projects = [
     _id: "project-fintech-mobile-app",
     title: "FinTech Mobile App",
     order: 2,
-    category: "mobile",
+    category: categoryRef("category-mobile"),
     featured: true,
     tags: ["React Native", "Firebase", "Plaid API"],
     description:
@@ -205,7 +241,7 @@ const projects = [
     _id: "project-real-estate-portal",
     title: "Real Estate Portal",
     order: 3,
-    category: "web",
+    category: categoryRef("category-web"),
     featured: false,
     tags: ["Vue.js", "Express", "PostgreSQL", "Mapbox"],
     description:
@@ -217,7 +253,7 @@ const projects = [
     _id: "project-saas-analytics-tool",
     title: "SaaS Analytics Tool",
     order: 4,
-    category: "fullstack",
+    category: categoryRef("category-fullstack"),
     featured: false,
     tags: ["Next.js", "Python", "Redis", "D3.js"],
     description:
@@ -228,7 +264,7 @@ const projects = [
     _id: "project-restaurant-ordering-system",
     title: "Restaurant Ordering System",
     order: 5,
-    category: "fullstack",
+    category: categoryRef("category-fullstack"),
     featured: false,
     tags: ["React", "Socket.io", "Node.js", "MySQL"],
     description:
@@ -256,6 +292,11 @@ async function seed() {
   }
   console.log(`✓ ${services.length} services`);
 
+  for (const item of projectCategories) {
+    await client.createOrReplace(item);
+  }
+  console.log(`✓ ${projectCategories.length} project categories`);
+
   for (const item of projects) {
     await client.createOrReplace({ _type: "project", ...item });
   }
@@ -266,8 +307,10 @@ async function seed() {
   }
   console.log(`✓ ${stats.length} statistics`);
 
-  console.log("\nDone! Open /studio → Site Settings → Page Sections to edit section text.");
-  console.log("Edit Services, Projects, and Statistics from the studio sidebar.");
+  console.log("\nDone! In /studio you can:");
+  console.log("  • Project Categories — add/rename/delete filter tabs");
+  console.log("  • Projects — type custom tags; pick or create categories");
+  console.log("  • Site Settings → Page Sections — edit section headings");
 }
 
 seed().catch((err) => {

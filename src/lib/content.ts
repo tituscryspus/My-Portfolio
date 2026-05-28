@@ -1,10 +1,11 @@
 import { cache } from "react";
 import { siteConfig as staticSiteConfig, services as staticServices, stats as staticStats } from "@/data/site";
 import { pageSections as staticSections, type AboutSection, type PageSections, type SectionIntro } from "@/data/sections";
-import { projects as staticProjects } from "@/data/projects";
+import { projectCategories as staticProjectCategories, projects as staticProjects } from "@/data/projects";
 import { sanityClient } from "@/sanity/lib/client";
 import { urlForImage } from "@/sanity/lib/image";
 import {
+  projectCategoriesQuery,
   projectsQuery,
   servicesQuery,
   siteSettingsQuery,
@@ -13,6 +14,7 @@ import {
 import { isSanityConfigured } from "@/sanity/env";
 import type {
   Project,
+  ProjectCategory,
   Service,
   ServiceIcon,
   SiteConfig,
@@ -25,6 +27,7 @@ const staticContent: SiteContent = {
   sections: staticSections,
   services: staticServices as Service[],
   projects: staticProjects,
+  projectCategories: staticProjectCategories,
   stats: staticStats,
 };
 
@@ -166,9 +169,9 @@ function isUsableService(
 }
 
 function isUsableProject(
-  item: { title?: string; description?: string } | null | undefined
+  item: { title?: string; description?: string; category?: string | null } | null | undefined
 ): boolean {
-  return Boolean(item?.title?.trim() && item?.description?.trim());
+  return Boolean(item?.title?.trim() && item?.description?.trim() && item?.category?.trim());
 }
 
 function isUsableStat(item: { value?: string; label?: string } | null | undefined): boolean {
@@ -197,7 +200,8 @@ function mapProjectsFromSanity(
     description?: string;
     image?: SanityImage;
     tags?: string[];
-    category?: Project["category"];
+    category?: string | null;
+    categoryLabel?: string | null;
     liveUrl?: string;
     githubUrl?: string;
     featured?: boolean;
@@ -208,19 +212,48 @@ function mapProjectsFromSanity(
   if (!cmsActive && usable.length === 0) {
     return staticContent.projects;
   }
-  return usable.map((item, index) => ({
-    id: item._id || String(index),
-    title: item.title!.trim(),
-    description: item.description!.trim(),
-    image:
-      imageUrl(item.image, staticProjects[index]?.image || "/projects/ecommerce.svg") ||
-      "/projects/ecommerce.svg",
-    tags: item.tags?.length ? item.tags : staticProjects[index]?.tags || [],
-    category: item.category || staticProjects[index]?.category || "web",
-    liveUrl: item.liveUrl || staticProjects[index]?.liveUrl || undefined,
-    githubUrl: item.githubUrl || staticProjects[index]?.githubUrl || undefined,
-    featured: item.featured ?? staticProjects[index]?.featured ?? false,
-  }));
+  return usable.map((item, index) => {
+    const fallback = staticProjects[index];
+    const category = item.category?.trim() || fallback?.category || "web";
+    const categoryLabel =
+      item.categoryLabel?.trim() ||
+      fallback?.categoryLabel ||
+      staticProjectCategories.find((entry) => entry.id === category)?.label ||
+      category;
+
+    return {
+      id: item._id || String(index),
+      title: item.title!.trim(),
+      description: item.description!.trim(),
+      image:
+        imageUrl(item.image, fallback?.image || "/projects/ecommerce.svg") ||
+        "/projects/ecommerce.svg",
+      tags: item.tags?.length ? item.tags : fallback?.tags || [],
+      category,
+      categoryLabel,
+      liveUrl: item.liveUrl || fallback?.liveUrl || undefined,
+      githubUrl: item.githubUrl || fallback?.githubUrl || undefined,
+      featured: item.featured ?? fallback?.featured ?? false,
+    };
+  });
+}
+
+function mapProjectCategoriesFromSanity(
+  items: Array<{ categoryId?: string | null; label?: string | null }>,
+  cmsActive: boolean
+): ProjectCategory[] {
+  const usable = items
+    .map((item) => ({
+      id: item.categoryId?.trim() || "",
+      label: item.label?.trim() || "",
+    }))
+    .filter((item) => item.id && item.label);
+
+  if (!cmsActive && usable.length === 0) {
+    return staticContent.projectCategories;
+  }
+
+  return usable;
 }
 
 function mapStatsFromSanity(
@@ -243,7 +276,7 @@ export const getContent = cache(async (): Promise<SiteContent> => {
   }
 
   try {
-    const [settings, services, projects, stats] = await Promise.all([
+    const [settings, services, projects, projectCategories, stats] = await Promise.all([
       sanityClient.fetch<SanitySiteSettings | null>(siteSettingsQuery),
       sanityClient.fetch<
         Array<{
@@ -260,12 +293,16 @@ export const getContent = cache(async (): Promise<SiteContent> => {
           description?: string;
           image?: SanityImage;
           tags?: string[];
-          category?: Project["category"];
+          category?: string | null;
+          categoryLabel?: string | null;
           liveUrl?: string;
           githubUrl?: string;
           featured?: boolean;
         }>
       >(projectsQuery),
+      sanityClient.fetch<Array<{ categoryId?: string | null; label?: string | null }>>(
+        projectCategoriesQuery
+      ),
       sanityClient.fetch<Array<{ value?: string; label?: string }>>(statsQuery),
     ]);
 
@@ -280,6 +317,7 @@ export const getContent = cache(async (): Promise<SiteContent> => {
       sections: mergePageSections(settings!.sections),
       services: mapServicesFromSanity(services ?? [], cmsActive),
       projects: mapProjectsFromSanity(projects ?? [], cmsActive),
+      projectCategories: mapProjectCategoriesFromSanity(projectCategories ?? [], cmsActive),
       stats: mapStatsFromSanity(stats ?? [], cmsActive),
     };
   } catch (error) {
